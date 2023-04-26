@@ -39,6 +39,8 @@ def answer1():
     # Print out the resulting table
     data_sorted = data[['MAIN_PORT_NAME', 'distance_to_JI']].head(6)
 
+    print(data_sorted)
+
     # Write data to database
     data_sorted.to_sql('top_5_nearest_ports', con=conn, if_exists='replace', index=False)
 
