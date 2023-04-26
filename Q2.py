@@ -33,7 +33,13 @@ def answer2():
     """
 
     data = pd.read_sql(query, con=conn)
-    print(data.head(1))
+    largest_port = data.head(1)
+    print(largest_port)
+
+    # Write to postgres
+    largest_port.to_sql('largest_port', con=conn, if_exists='replace', index=False)
+
+    print('Largest_port written to postgres')
     
 
 
