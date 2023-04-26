@@ -17,7 +17,6 @@ port_name, port_latitude and port_longitude only.
 
 
 def answer3():
-    print('testing')
     conn =get_database_conn()
     query = """
     SELECT 
@@ -48,6 +47,8 @@ def answer3():
 
     sorted_data = data[['Country Name', 'MAIN_PORT_NAME', 'LATITUDE_DEGREES', 'LONGITUDE_DEGREES']].head(1)
     
+    print(sorted_data)
+
     sorted_data.to_sql('nearest_port_with_resources', con=conn, if_exists='replace', index=False)
 
     print('Sorted_data written to postgres')
