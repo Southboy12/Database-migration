@@ -46,6 +46,7 @@ To create the tables for the three questions, run the following commands
 python nearest_ports_table.py
 python largest_port_count_table.py
 python nearest_port_with_provisions_table.py
+```
 
 
 Extract Load (EL) Pipeline
