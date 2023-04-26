@@ -1,6 +1,5 @@
 import pandas as pd
-import dotenv, os
-from sqlalchemy import create_engine
+from util import get_database_conn
 
 
 
@@ -14,26 +13,27 @@ include the columns country and port_count only.
 """
 
 
-def get_database_conn():
-    """Credentials to connect to the database"""
-
-    dotenv.load_dotenv('./.env')
-    db_user_name = os.getenv('DB_USER_NAME')
-    db_password = os.getenv('DB_PASSWORD')
-    db_name = os.getenv('DB_NAME')
-    port = os.getenv('DB_PORT')
-    host = os.getenv('DB_HOST')
-    return create_engine(f'postgresql://{db_user_name}:{db_password}@{host}:{port}/{db_name}')
-
-
 def answer2():
     conn =get_database_conn()
     query = """
-        
+    SELECT 
+	"Country Name", COUNT("MAIN_PORT_NAME") AS Number_of_Ports
+    FROM
+        "WPI Import" I 
+    JOIN 
+        "Country Codes" S
+    ON 
+        I."WPI_COUNTRY_CODE"=S."Country Code"
+    WHERE 
+        "LOAD_OFFLOAD_WHARVES" = 'Y'
+    GROUP BY
+        1
+    ORDER BY
+        2 DESC;
     """
 
     data = pd.read_sql(query, con=conn)
-    print(data.head())
+    print(data.head(1))
     
 
 
