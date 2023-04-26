@@ -2,3 +2,4 @@ data
 extracted_data
 .env
 try
+__pycache__
