@@ -1,7 +1,5 @@
 import pandas as pd
-import dotenv, os
-from sqlalchemy import create_engine
-
+from util import get_database_conn, distance
 
 
 
@@ -14,68 +12,38 @@ distance_in_meters only.
 
 """
 
-
-def get_database_conn():
-    """Credentials to connect to the database"""
-
-    dotenv.load_dotenv('./.env')
-    db_user_name = os.getenv('DB_USER_NAME')
-    db_password = os.getenv('DB_PASSWORD')
-    db_name = os.getenv('DB_NAME')
-    port = os.getenv('DB_PORT')
-    host = os.getenv('DB_HOST')
-    return create_engine(f'postgresql://{db_user_name}:{db_password}@{host}:{port}/{db_name}')
-
-
-# """SELECT
-#     port_name,
-#     port_latitude,
-#     port_longitude,
-#     earth_distance(
-#         ll_to_earth(port_latitude, port_longitude),
-#         ll_to_earth(1.2667, 103.7333)
-#     ) AS distance
-# FROM
-#     ports
-# ORDER BY
-#     distance ASC
-# LIMIT
-#     5;"""
-
-
-# "MAIN_PORT_NAME",
-#         earth_distance(
-#             ll_to_earth(latitude_degrees, longitude_degrees),
-#             ll_to_earth(1.283333, 103.733333)
-#             ) AS distance
-
 def answer1():
     conn =get_database_conn()
     query = """
-    SELECT 
-        "MAIN_PORT_NAME", 
-        ST_Distance_Sphere(
-            ST_MakePoint(103.733333, 1.283333),
-            ST_MakePoint(64, 67)
-        ) AS distance   
-    FROM
-        (select 
-            *,
-            CASE 
-                WHEN "LATITUDE_HEMISPHERE"= 'N' THEN "LATITUDE_DEGREES" + ("LATITUDE_MINUTES" / 60.0)
-                WHEN "LATITUDE_HEMISPHERE" = 'S' THEN -1.0 * ("LATITUDE_DEGREES" + ("LATITUDE_MINUTES" / 60.0))
-            END AS latitude_degrees,
-            CASE 
-                WHEN "LONGITUDE_HEMISPHERE" = 'E' THEN "LONGITUDE_DEGREES" + "LONGITUDE_MINUTES"/60.0
-            WHEN "LONGITUDE_HEMISPHERE" = 'W' THEN -1*("LONGITUDE_DEGREES" + "LONGITUDE_MINUTES"/60.0)
-            END AS longitude_degrees
-        from 
-            "WPI Import") AS data_with_degrees;
+    SELECT * FROM "WPI Import"
     """
 
+    distances = []
     data = pd.read_sql(query, con=conn)
-    print(data.head())
-    
+    for index, row in data.iterrows():
+        if row['MAIN_PORT_NAME'] != 'JURONG ISLAND':  # Skip calculating the distance to itself
+            distance_to_JI = distance(data.loc[data['MAIN_PORT_NAME'] == 'JURONG ISLAND']['LATITUDE_DEGREES'].iloc[0],
+                                    data.loc[data['MAIN_PORT_NAME'] == 'JURONG ISLAND']['LONGITUDE_DEGREES'].iloc[0],
+                                    row['LATITUDE_DEGREES'],
+                                    row['LONGITUDE_DEGREES'])
+            distances.append(distance_to_JI)
+        else:
+            distances.append(0)  # Set distance to itself as 0
+        
+    # Add the distances as a new column to the data table
+    data['distance_to_JI'] = distances
+
+    # 
+    data.sort_values(by='distance_to_JI', inplace=True)
+
+    # Print out the resulting table
+    data_sorted = data[['MAIN_PORT_NAME', 'distance_to_JI']].head(6)
+
+    # Write data to database
+    data_sorted.to_sql('top_5_nearest_ports', con=conn, if_exists='replace', index=False)
+
+    print('Top_5_nearest_ports data successfully written to postgres')
+
 
 
 def main():
