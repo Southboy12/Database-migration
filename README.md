@@ -1,17 +1,18 @@
-GoFrieghts World Port Index Migration
-The World Port Index is a comprehensive database of ports and terminals around the world, containing information about their physical characteristics, facilities, and services. As part of our work at GoFrieghts, we have migrated this data from an old Access database to a modern PostgreSQL database, and created data marts by analyzing the data.
+# **GoFrieghts World Port Index Migration**
 
-Prerequisites:
+<p>The World Port Index is a comprehensive database of ports and terminals around the world, containing information about their physical characteristics, facilities, and services. As part of our work at GoFrieghts, we have migrated this data from an old Access database to a modern PostgreSQL database, and created data marts by analyzing the data.</p>
 
-Python 3.6 or later
-PostgreSQL 10 or later
-psycopg2
-dotenv
-sqlachelmy
-opendatasets
-pandas
+## **Prerequisites:**
 
-Installation:
+* Python 3.6 or later
+* PostgreSQL 10 or later
+* psycopg2
+* dotenv
+* sqlachelmy
+* opendatasets
+* pandas
+
+## **Installation:**
 
 1. Clone the repository:
 
@@ -32,7 +33,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Usage:
+## **Usage:**
 
 To migrate the World Port Index data from Access database to Postgres, run the following command:
 
@@ -48,8 +49,7 @@ python largest_port_count_table.py
 python nearest_port_with_provisions_table.py
 ```
 
-
-Extract Load (EL) Pipeline
+## **Extract Load (EL) Pipeline**
 
 We have built an Extract Load (EL) pipeline to migrate the World Port Index data from the old Access database to out PostgreSQL database. The Access database can be accessed through the following link:
 
@@ -57,10 +57,10 @@ We have built an Extract Load (EL) pipeline to migrate the World Port Index data
 https://drive.google.com/file/d/1VyCGCAfFuEK7vB1C9Vq8iPdgBdu-LDM4/view?usp=share_link
 ```
 
-Contributing:
+## **Contributing:**
 
 Contributions are welcome! Please feel free to open an issue or pull request if you have any suggestions or improvements.
 
-License:
+## **License:**
 
 This project is licensed under the MIT License.
