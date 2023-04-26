@@ -51,13 +51,6 @@ def answer3():
     sorted_data.to_sql('nearest_port_with_resources', con=conn, if_exists='replace', index=False)
 
     print('Sorted_data written to postgres')
-    # # Print out the resulting table
-    # data_sorted = data[['MAIN_PORT_NAME', 'distance_to_JI']].head(6)
-
-    # # Write data to database
-    # data_sorted.to_sql('top_5_nearest_ports', con=conn, if_exists='replace', index=False)
-
-    # print('Top_5_nearest_ports data successfully written to postgres')
 
 
 def main():
